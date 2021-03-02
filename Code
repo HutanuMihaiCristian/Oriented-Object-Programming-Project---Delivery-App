@@ -1,0 +1,1287 @@
+#include <iostream>
+#include <fstream>
+#include <windows.h>
+#include <cstring>
+#include <vector>
+#include <list>
+#include <iterator>
+#include <set>
+#include <map>
+#include <exception>
+#include <stdexcept>
+using namespace std;
+int nrRestaurante=4;
+void CodClearConsole(HANDLE hConsole){
+    //https://docs.microsoft.com/ro-ro/windows/console/clearing-the-screen
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    SMALL_RECT scrollRect;
+    COORD scrollTarget;
+    CHAR_INFO fill;
+    if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
+    {
+        return;
+    }
+    scrollRect.Left = 0;
+    scrollRect.Top = 0;
+    scrollRect.Right = csbi.dwSize.X;
+    scrollRect.Bottom = csbi.dwSize.Y;
+    scrollTarget.X = 0;
+    scrollTarget.Y = (SHORT)(0 - csbi.dwSize.Y);
+    fill.Char.UnicodeChar = TEXT(' ');
+    fill.Attributes = csbi.wAttributes;
+    ScrollConsoleScreenBuffer(hConsole, &scrollRect, NULL, scrollTarget, &fill);
+    csbi.dwCursorPosition.X = 0;
+    csbi.dwCursorPosition.Y = 0;
+    SetConsoleCursorPosition(hConsole, csbi.dwCursorPosition);
+}
+void ClearConsole(){
+    //https://docs.microsoft.com/ro-ro/windows/console/clearing-the-screen
+    HANDLE hStdout;
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    CodClearConsole(hStdout);
+}
+void afisare_restaurante(){
+
+}
+void afisare_meniu(){
+
+}
+class Manager{
+    public:
+    virtual void afisareRestaurante()=0;
+    virtual void adaugaRestaurant()=0;
+    virtual void eliminaRestaurant()=0;
+};
+class Administrator:public Manager{
+    char nume[10];
+    public:
+    Administrator(char nume[10]){
+    strcpy(this->nume,nume);
+    }
+    virtual void afisareRestaurante(){}
+    virtual void adaugaRestaurant(){}
+    virtual void eliminaRestaurant(){}
+    friend istream& operator>> (istream& in, Administrator &ad){
+        char aux[10];
+    cout<<"Dati numele:";
+    in>>aux;
+    strcpy(ad.nume,aux);
+    }
+};
+class Restaurante{
+    private:
+    static int nrRestaurante;
+    const int nrRestaurant=nrRestaurante++;
+    int nrComenzi;
+    int nrProduse;
+    bool transportPropriu;
+    char* numeRestaurant;
+    char meniu[100];
+    char stele;
+    float procentaj;
+    double profitGenerat;
+    int* preturi;
+    public:
+    Restaurante(int nrRestaurantt ,int nrComenzi , bool transportPropriu , char* numeRestaurant , char meniu[] , char stele , float procentaj , double profitGenerat,int nrProduse, int* preturi):nrRestaurant(nrRestaurantt){
+    this->nrComenzi = nrComenzi;
+    this->nrProduse = nrProduse;
+    this->transportPropriu =transportPropriu;
+    strcpy(this->meniu,meniu);
+    this->stele=stele;
+    this->procentaj=procentaj;
+    this->profitGenerat=profitGenerat;
+    this->numeRestaurant=new char[strlen(numeRestaurant)+1];
+    strcpy(this->numeRestaurant,numeRestaurant);
+    this->preturi=new int[nrProduse];
+    for(int i=0; i<nrProduse; i++)
+            this->preturi[i]=preturi[i];
+    }
+    Restaurante(char stele , char* numeRestaurant , char meniu[],int nrProduse, int* preturi){
+    this->nrComenzi = 0;
+    this->nrProduse = nrProduse;
+    this->transportPropriu =0;
+    strcpy(this->meniu,meniu);
+    this->stele=stele;
+    this->procentaj=20.5;
+    this->profitGenerat=0;
+    this->numeRestaurant=new char[strlen(numeRestaurant)+1];
+    strcpy(this->numeRestaurant,numeRestaurant);
+    this->preturi=new int[nrProduse];
+    for(int i=0; i<nrProduse; i++)
+            this->preturi[i]=preturi[i];
+    }
+    Restaurante(){
+    this->nrComenzi = 0;
+    this->nrProduse = 1;
+    this->transportPropriu =0;
+    strcpy(this->meniu,"Meniul casei");
+    this->stele='3';
+    this->procentaj=20.5;
+    this->profitGenerat=0;
+    this->numeRestaurant=new char[strlen("Anonim")+1];
+    strcpy(this->numeRestaurant,"Anonim");
+    this->preturi=new int[1];
+    this->preturi[0]=5;
+    }
+    Restaurante(const Restaurante& rez):nrRestaurant(rez.nrRestaurant){
+    this->nrComenzi = rez.nrComenzi;
+    this->nrProduse = rez.nrProduse;
+    this->transportPropriu =rez.transportPropriu;
+    strcpy(this->meniu,rez.meniu);
+    this->stele=rez.stele;
+    this->procentaj=rez.procentaj;
+    this->profitGenerat=rez.profitGenerat;
+    this->numeRestaurant=new char[strlen(rez.numeRestaurant)+1];
+    strcpy(this->numeRestaurant,rez.numeRestaurant);
+    this->preturi=new int[rez.nrProduse];
+    for(int i=0; i<rez.nrProduse; i++)
+            this->preturi[i]=rez.preturi[i];
+    }
+    int getNrRestaurant(){
+    return this->nrRestaurant;
+    }
+    int getNrRestaurante(){
+    return this->nrRestaurante;
+    }
+    int getNrComenzi(){
+    return this->nrComenzi;
+    }
+    int getNrProduse(){
+    return this->nrProduse;
+    }
+    bool getTransportPropriu(){
+    return this->transportPropriu;
+    }
+    char* getNumeRestaurant(){
+    return this->numeRestaurant;
+    }
+    char* getMeniu(){
+    return this->meniu;
+    }
+    char getStele(){
+    return this->stele;
+    }
+    float getProcentaj(){
+    return this->procentaj;
+    }
+    double getProfitGenerat(){
+    return this->profitGenerat;
+    }
+    int* getPreturi(){
+    return this->preturi;
+    }
+    void setNrComenzi(int x){
+    this->nrComenzi = x;
+    }
+    void setNrProduse(int x){
+    this->nrProduse = x;
+    }
+    void setTransportPropriu(bool l){
+    this->transportPropriu=l;
+    }
+    void setNumeRestaurant(char a[]){
+    if(this->numeRestaurant!=NULL)
+                    delete[] this->numeRestaurant;
+    this->numeRestaurant=new char[strlen(a)+1];
+                strcpy(this->numeRestaurant,a);
+    }
+    void setMeniu(char a[]){
+    strcpy(this->meniu,a);
+    }
+    void setStele(char a){
+    this->stele=a;
+    }
+    void setProcentaj(float a){
+    this->procentaj=a;
+    }
+    void setProfitGenerat(double a){
+    this->profitGenerat=a;
+    }
+    void setPreturi(int* x,int j){
+    if(this->preturi!=NULL)
+                     delete[] this->preturi;
+    this->preturi=new int[j];
+    for(int i=0; i<j; i++)
+                        this->preturi[i]=x[i];
+    }
+    int operator [](int index){
+        while(true){
+        if(index<this->nrProduse && index>=0)
+            return this->preturi[index];
+        else {cout<<"Index invalid,dati un index valix:";
+            cin>>index;
+             }
+        }
+    }
+    const Restaurante &operator++(){
+        this->nrComenzi++;
+        return *this;
+    }
+    const Restaurante &operator--(){
+        if(this->nrComenzi>0)this->nrComenzi--;
+        return *this;
+    }
+    Restaurante &operator+(int x){
+    this->profitGenerat=this->profitGenerat + x;
+    return *this;
+    }
+    Restaurante &operator-(int x){
+    this->profitGenerat=this->profitGenerat - x;
+    return *this;
+    }
+    Restaurante& operator =(const Restaurante& rez){
+        if(this!=&rez){
+                this->nrComenzi = rez.nrComenzi;
+                this->nrProduse = rez.nrProduse;
+                this->transportPropriu =rez.transportPropriu;
+                strcpy(this->meniu,rez.meniu);
+                this->stele=rez.stele;
+                this->procentaj=rez.procentaj;
+                this->profitGenerat=rez.profitGenerat;
+                if(this->numeRestaurant!=NULL)
+                                delete[] this->numeRestaurant;
+                this->numeRestaurant=new char[strlen(rez.numeRestaurant)+1];
+                strcpy(this->numeRestaurant,rez.numeRestaurant);
+                if(this->preturi!=NULL)
+                                 delete[] this->preturi;
+                this->preturi=new int[rez.nrProduse];
+                for(int i=0; i<rez.nrProduse; i++)
+                        this->preturi[i]=rez.preturi[i];
+        }
+        return *this;
+    }
+    explicit operator int(){
+        return (int)this->profitGenerat;
+    }
+    void afisareMeniu(){
+    int x=0,l=0;
+    l=strlen(this->meniu)+1;
+    char* aux = new char[l];
+    char*sep=",";
+    char*produs;
+    strcpy(aux,this->meniu);
+    produs = strtok(aux,sep);
+    while(x<this->nrProduse){
+        cout<<endl<<x+1<<"."<<produs<<" cu pretul:"<<this->preturi[x];
+        x++;
+        produs =strtok(NULL,sep);
+    }
+    }
+    bool operator ==(Restaurante rez){
+    if(this->profitGenerat == rez.profitGenerat )
+            {return true;}
+        else
+           {return false;}
+
+    }
+    bool operator <(Restaurante rez){
+    if(this->profitGenerat < profitGenerat)
+            {return true;}
+        else
+           {return false;}
+
+    }
+    friend ostream& operator<< (ostream& out, const Restaurante &rez){
+    out<<"\nNumar comenzi:"<<rez.nrComenzi;
+    out<<"\nNumar produse:"<<rez.nrProduse;
+    out<<"\nTransport propriu:"<<rez.transportPropriu;
+    out<<"\nNumele restaurantului:"<<rez.numeRestaurant;
+    out<<"\nProfit generat:"<<rez.profitGenerat;
+    out<<"\nNumar de stele:"<<rez.stele;
+    out<<"\nProcentaj:"<<rez.procentaj;
+    int x=0,l=0;
+    l=strlen(rez.meniu)+1;
+    char* aux = new char[l];
+    char* sep=",";
+    char* produs;
+    strcpy(aux,rez.meniu);
+    produs = strtok(aux,sep);
+    while(x<rez.nrProduse){
+        out<<endl<<x+1<<"."<<produs<<" cu pretul:"<<rez.preturi[x];
+        x++;
+        produs =strtok(NULL,sep);
+    }
+    return out;
+    }
+    friend istream& operator>> (istream& in, Restaurante& rez){
+    rez.nrComenzi=0;
+    rez.profitGenerat=0;
+    cout<<"Intruduceti numele restaurantului:";
+    char aux[100];
+    in>>aux;
+    if(rez.numeRestaurant!=NULL)
+            delete[] rez.numeRestaurant;
+    rez.numeRestaurant=new char[strlen(aux)+1];
+    strcpy(rez.numeRestaurant,aux);
+    cout<<"\nAveti transport propriu pentru comenzi?(1/0):";in>>rez.transportPropriu;
+    cout<<"\nDati numarul de stele al restaurantului:";in>>rez.stele;
+    cout<<"\nProcentajul nostru este de 20.5% din valoarea comezii aduse la restaurantul dumneavoastra,";
+    cout<<"\npentru posibile negocieri contactati un administrator.";rez.procentaj=20.5;
+    cout<<"\nDati numarul de produse din meniu:";in>>rez.nrProduse;
+    char aux2[20];
+    int x;
+    if(rez.preturi!=NULL)
+            delete[] rez.preturi;
+    rez.preturi=new int[rez.nrProduse];
+    strcpy(rez.meniu,"");
+    for(int i=0;i<rez.nrProduse;++i){
+        cout<<"\nDati produsul "<<i+1<<":";
+        in>>aux2;
+        cout<<"Dati pretul produului:";
+        in>>x;
+        strcat(rez.meniu,aux2);
+        strcat(rez.meniu,",");
+        rez.preturi[i]=x;
+    }
+    return in;
+    }
+    friend ifstream& operator>> (ifstream& in, Restaurante& rez){
+    rez.nrComenzi=0;
+    rez.profitGenerat=0;
+    char aux[100];
+    in>>aux;
+    if(rez.numeRestaurant!=NULL)
+            delete[] rez.numeRestaurant;
+    rez.numeRestaurant=new char[strlen(aux)+1];
+    strcpy(rez.numeRestaurant,aux);
+    in>>rez.transportPropriu;
+    in>>rez.stele;
+    rez.procentaj=20.5;
+    in>>rez.nrProduse;
+    char aux2[20];
+    int x;
+    if(rez.preturi!=NULL)
+            delete[] rez.preturi;
+    rez.preturi=new int[rez.nrProduse];
+    strcpy(rez.meniu,"");
+    for(int i=0;i<rez.nrProduse;++i){
+        in>>aux2;
+        in>>x;
+        strcat(rez.meniu,aux2);
+        strcat(rez.meniu,",");
+        rez.preturi[i]=x;
+    }
+    return in;
+    }
+    ~Restaurante(){
+    if(this->numeRestaurant!=NULL)
+            delete[] this->numeRestaurant;
+        if(this->preturi!=NULL)
+            delete[] this->preturi;
+    }
+};
+    int Restaurante::nrRestaurante = 0;
+class ListaRestaurante{
+    private:
+    Restaurante *lista[10];
+    int index;
+    public:
+    ListaRestaurante(){
+    this->index = 0;
+    }
+    void adaugare(Restaurante &rez){
+    lista[this->index] = new Restaurante();
+    *lista[this->index] = rez;
+    this->index++;
+    }
+    void stergere(int ind){
+    for (int i=ind;i<this->index-1;++i){
+        lista[i] = new Restaurante();
+        *lista[i] = *lista[i+1];
+    }
+    lista[this->index] = new Restaurante();
+    this->index=this->index - 1;
+    }
+    int getIndex(){
+    return this->index;
+    }
+    void afiseazaRestaurant(int ind){
+    cout<<*lista[ind];
+    }
+    char* getNumeRestaurantt(int i){
+    return (*lista[i]).getNumeRestaurant();
+    }
+    void afisareMeniuri(){
+    for (int i=0;i<this->index-1;++i){
+        cout<<endl<<(*lista[i]).getNumeRestaurant();
+        cout<<endl;
+        (*lista[i]).afisareMeniu();
+    }
+    }
+    Restaurante operator [](int index){
+        return *lista[index];
+    }
+};
+class Comenzi{
+    private:
+    static char Firma[9];
+    const int pretTransport=5;
+    int nrComanda;
+    bool livrat;
+    char* adresa;
+    char numeClient[20];
+    char sector;
+    float greutateComanda;
+    double pretComanda;
+    int* comenzi;///Pozitia din veztor reprezinta numarul restaurantului
+    ///si fiecare cifra din valoare reprezinta numarul produsului cumparat din meniu
+    public:
+    Comenzi(int pret ,int nrComanda , bool livrat , char*adresa , char numeClient[] , char sector , float greutateComanda , double pretComanda ,int nrRestaurante, int* comenzi):pretTransport(pret){
+    this->nrComanda = nrComanda;
+    this->livrat = livrat;
+    strcpy(this->numeClient,numeClient);
+    this->sector=sector;
+    this->greutateComanda=greutateComanda;
+    this->pretComanda=pretComanda;
+    this->adresa=new char[strlen(adresa)+1];
+    strcpy(this->adresa,adresa);
+    this->comenzi=new int[nrRestaurante];
+    for(int i=0; i<nrRestaurante; i++)
+            this->comenzi[i]=comenzi[i];
+    }
+    Comenzi(int nrComanda , char* adresa , char numeClient[] , char sector , float greutateComanda , double pretComanda ,int nrRestaurante, int* comenzi){
+    this->nrComanda = nrComanda;
+    this->livrat = 0;
+    strcpy(this->numeClient,numeClient);
+    this->sector=sector;
+    this->greutateComanda=greutateComanda;
+    this->pretComanda=pretComanda;
+    this->adresa=new char[strlen(adresa)+1];
+    strcpy(this->adresa,adresa);
+    this->comenzi=new int[nrRestaurante];
+    for(int i=0; i<nrRestaurante; i++)
+            this->comenzi[i]=comenzi[i];
+    }
+    Comenzi(){
+    this->nrComanda = 0;
+    this->livrat = 1;
+    strcpy(this->numeClient,"VIP");
+    this->sector=0;
+    this->greutateComanda=0;
+    this->pretComanda=0;
+    this->adresa=new char[strlen("Adresa VIP")+1];
+    strcpy(this->adresa,"Adresa VIP");
+    this->comenzi=new int[10];
+    for(int i=0 ;i<=9;++i)this->comenzi[i]=0;
+    }
+    Comenzi(const Comenzi& com):pretTransport(com.pretTransport){
+    this->nrComanda = com.nrComanda;
+    this->livrat = com.livrat;
+    strcpy(this->numeClient,com.numeClient);
+    this->sector=com.sector;
+    this->greutateComanda=com.greutateComanda;
+    this->pretComanda=com.pretComanda;
+    this->adresa=new char[strlen(com.adresa)+1];
+    strcpy(this->adresa,com.adresa);
+    this->comenzi=new int[nrRestaurante];
+    for(int i=0; i<nrRestaurante; i++)
+            this->comenzi[i]=com.comenzi[i];
+    }
+    int getPretTransport(){
+    return this->pretTransport;
+    }
+    char* getFirma(){
+    return this->Firma;
+    }
+    int getNrComanda(){
+    return this->nrComanda;
+    }
+    bool getLivrat(){
+    return this->livrat;
+    }
+    char* getAdresa(){
+    return this->adresa;
+    }
+    char* getNumeClient(){
+    return this->numeClient;
+    }
+    char getSector(){
+    return this->sector;
+    }
+    float getGreutateComanda(){
+    return this->greutateComanda;
+    }
+    double getPretComanda(){
+    return this->pretComanda;
+    }
+    int* getComenzi(){
+    return this->comenzi;
+    }
+    void setNrComanda(int x){
+    this->nrComanda = x;
+    }
+    void setLivrat(bool l){
+    this->livrat=l;
+    }
+    void setAdresa(char* a){
+    if(this->adresa!=NULL)
+                    delete[] this->adresa;
+    this->adresa=new char[strlen(a)+1];
+                strcpy(this->adresa,a);
+    }
+    void setNumeClient(char a[]){
+    strcpy(this->numeClient,a);
+    }
+    void setSector(char a){
+    this->sector=a;
+    }
+    void setGreutateComanda(float a){
+    this->greutateComanda=a;
+    }
+    void setPretComanda(double a){
+    this->pretComanda=a;
+    }
+    void setComenzi(int* x){
+    if(this->comenzi!=NULL)
+                     delete[] this->comenzi;
+    this->comenzi=new int[nrRestaurante];
+    for(int i=0; i<nrRestaurante; i++)
+                        this->comenzi[i]=x[i];
+    }
+    void setComanda(int x,int y){
+    this->comenzi[x]=y;
+    }
+    int operator [](int index){
+        while(true){
+        if(index<nrRestaurante && index>=0)
+            return this->comenzi[index];
+        else {cout<<"Index invalid,dati un index valix:";
+            cin>>index;
+             }
+        }
+    }
+    const Comenzi &operator++(){
+        this->pretComanda++;
+        return *this;
+    }
+    const Comenzi &operator--(){
+        this->pretComanda--;
+        return *this;
+    }
+    Comenzi &operator+(int x){
+    this->greutateComanda=this->greutateComanda + x;
+    return *this;
+    }
+    Comenzi &operator-(int x){
+    this->greutateComanda=this->greutateComanda - x;
+    return *this;
+    }
+    Comenzi &operator =(const Comenzi& com){
+
+        if(this!=&com){
+                this->nrComanda = com.nrComanda;
+                this->livrat = com.livrat;
+                strcpy(this->numeClient,com.numeClient);
+                this->sector=com.sector;
+                this->greutateComanda=com.greutateComanda;
+                this->pretComanda=com.pretComanda;
+                 if(this->adresa!=NULL)
+                    delete[] this->adresa;
+                this->adresa=new char[strlen(com.adresa)+1];
+                strcpy(this->adresa,com.adresa);
+                 if(this->comenzi!=NULL)
+                     delete[] this->comenzi;
+                this->comenzi=new int[nrRestaurante];
+                for(int i=0; i<nrRestaurante; i++)
+                        this->comenzi[i]=com.comenzi[i];
+        }
+        return *this;
+    }
+    explicit operator int(){
+        return (int)this->greutateComanda;
+    }
+    float profitAdus(){
+    float profit;
+    profit = this->pretTransport +20 * this->pretComanda /100;
+    profit = int(profit*100);
+    return profit/100;
+    }
+    bool operator ==(Comenzi& com){
+    if(this->profitAdus() == com.profitAdus() )
+            {return true;}
+        else
+           {return false;}
+
+    }
+    bool operator <(Comenzi& com){
+    if(this->profitAdus() < com.profitAdus())
+            {return true;}
+        else
+           {return false;}
+
+    }
+    friend ostream& operator<< (ostream& out,  Comenzi com){
+        if(com.getNrComanda() == 0){
+            out<<"Comanda VIP";
+            return out;
+        }
+        out<<"Comanda cu numarul "<<com.getNrComanda()<<":";
+        out<<"\nNumele Clientului :"<<com.getNumeClient();
+        out<<"\nSectorul :"<<com.getSector();
+        out<<"\nProfitul adus este de :"<<com.profitAdus();
+        return out;
+    }
+    friend ofstream& operator<< (ofstream& out,  Comenzi com){
+        if(com.getNrComanda() == 0){
+            out<<"Comanda VIP";
+            return out;
+        }
+        out<<"Comanda cu numarul "<<com.getNrComanda()<<":";
+        out<<"\nNumele Clientului :"<<com.getNumeClient();
+        out<<"\nSectorul :"<<com.getSector();
+        out<<"\nProfitul adus este de :"<<com.profitAdus();
+        return out;
+    }
+    friend istream& operator>> (istream& in,  Comenzi& com){
+        ClearConsole();
+        char aux1[100];
+        cout<<"Introduceti Numele:";
+        in>>aux1;
+        strcpy(com.numeClient,aux1);
+        cout<<"Introduceti sectorul:";
+        in>>com.sector;
+        cout<<"Intruduceti adresa:";
+        char aux[100];
+        cin>>aux;
+        if(com.adresa!=NULL)
+            delete[] com.adresa;
+        com.adresa=new char[strlen(aux)+1];
+        strcpy(com.adresa,aux);
+    }
+    ~Comenzi(){
+    if(this->comenzi!=NULL)
+            delete[] this->comenzi;
+        if(this->adresa!=NULL)
+            delete[] this->adresa;
+    }
+};
+    char Comenzi::Firma[9] = "Zhafendy";
+class ComenziCuReducere:public Comenzi{
+    private:
+    int valoareReducere;
+    public:
+    ComenziCuReducere(int valoareReducere,int nrComanda , char* adresa , char numeClient[] , char sector , float greutateComanda , double pretComanda ,int nrRestaurante, int* comenzi):Comenzi(nrComanda ,adresa ,numeClient ,sector ,greutateComanda ,pretComanda ,nrRestaurante,comenzi){
+    this->valoareReducere = valoareReducere;
+    }
+    ComenziCuReducere():Comenzi(){
+    this->valoareReducere=0;
+    }
+    void aplicaReducere(){
+    this->setPretComanda((this->getPretComanda() * valoareReducere) /100);
+    }
+};
+class Livrator{
+    private:
+    char nume[50];
+    int varsta;
+    int comenziLivrate;
+    bool vehicul;
+    public:
+    Livrator(char nume[] , int varsta , bool vehicul){
+    strcpy(this->nume,nume);
+    this->varsta=varsta;
+    this->vehicul=vehicul;
+    this->comenziLivrate=0;
+    }
+    Livrator(int varsta , bool vehicul){
+    strcpy(this->nume,"Anonim");
+    this->varsta=varsta;
+    this->vehicul=vehicul;
+    this->comenziLivrate=0;
+    }
+    Livrator(){
+    strcpy(this->nume,"Anonim");
+    this->varsta=0;
+    this->vehicul=0;
+    this->comenziLivrate=0;
+    }
+    Livrator(const Livrator& liv){
+    strcpy(this->nume,liv.nume);
+    this->varsta=liv.varsta;
+    this->vehicul=liv.vehicul;
+    this->comenziLivrate=liv.comenziLivrate;
+    }
+    Livrator& operator =(const Livrator& liv){
+    strcpy(this->nume,liv.nume);
+    this->varsta=liv.varsta;
+    this->vehicul=liv.vehicul;
+    this->comenziLivrate=liv.comenziLivrate;
+    return *this;
+    }
+    friend ostream& operator<< (ostream& out, const Livrator &liv){
+    out<<"Numele livratorului este:"<<liv.nume;
+    out<<"\nVarsta livratorului este:"<<liv.varsta;
+    out<<"\nLivratorul";
+    if(liv.vehicul)out<<" are vehicul.";
+    else out<<" nu are vehicul.";
+    out<<"\nLivratorul a facut "<<liv.comenziLivrate<<" comenzi";
+    return out;
+    }
+    friend istream& operator>> (istream& in, Livrator &liv){
+    char aux[100];
+    cout<<"Dati numele:";in>>aux;
+    strcpy(liv.nume,aux);
+    cout<<"\nDati varsta:";in>>liv.varsta;
+    cout<<"\nAveti vehicul?(1/0)";in>>liv.vehicul;
+    liv.comenziLivrate=0;
+    return in;
+    }
+    float calculSalariu(){
+    if(this->vehicul)return this->varsta /5 +this->comenziLivrate *2;
+    return this->varsta /5 +this->comenziLivrate;
+    }
+    ~Livrator(){}
+};
+class Client{
+    private:
+    char nume[100];
+    char parola[100];
+    int nrComenzi;
+    float totalPlatit;
+    bool ok;///daca a platiti mereu comenzile
+    public:
+    virtual void mesajReducere()=0;
+    Client(char nume[] ,char parola[], int nrComenzi , bool ok){
+    strcpy(this->nume,nume);
+    strcpy(this->parola,parola);
+    this->nrComenzi=nrComenzi;
+    this->ok=ok;
+    }
+    Client(char nume[] ,char parola[]){
+    strcpy(this->nume,nume);
+    this->nrComenzi=nrComenzi;
+    this->ok=ok;
+    }
+    Client(){
+    strcpy(this->nume,"Anonim");
+    strcpy(this->parola,"123");
+    this->nrComenzi=0;
+    this->ok=1;
+    }
+    Client(const Client& cli){
+    strcpy(this->nume,cli.nume);
+    strcpy(this->parola,cli.parola);
+    this->nrComenzi=cli.nrComenzi;
+    this->ok=cli.ok;
+    }
+    Client& operator =(const Client& cli){
+    strcpy(this->nume,cli.nume);
+    strcpy(this->parola,cli.parola);
+    this->nrComenzi=cli.nrComenzi;
+    this->ok=cli.ok;
+    return *this;
+    }
+    friend ostream& operator<< (ostream& out, const Client &cli){
+    out<<"Numele clientului este:"<<cli.nume;
+    out<<"\nParola clientului este:"<<cli.parola;
+    out<<"\nA facut "<<cli.nrComenzi<<" comenzi.";
+    if(cli.ok)out<<"\nNu are antecedente.";
+    else out<<"\nAre antecedeante.";
+    return out;
+    }
+    friend istream& operator>> (istream& in, Client &cli){
+    char aux[100];
+    cout<<"Dati numele:";in>>aux;
+    strcpy(cli.nume,aux);
+    cout<<"Dati parola:";in>>aux;
+    strcpy(cli.parola,aux);
+    cli.nrComenzi=0;
+    cli.ok=1;
+    return in;
+    }
+    bool meritaReducere(){
+    if(this->ok)
+        if(this->nrComenzi>5 && this->totalPlatit>20)return 1;
+    else return 0;
+    }
+    ~Client(){}
+};
+class ClientNou:public Client{
+    private:
+    bool aFolositReducerea;
+    public:
+    ClientNou():Client(){
+    this->aFolositReducerea=0;
+    }
+    ClientNou(char nume[] ,char parola[], int nrComenzi , bool ok):Client(nume,parola,nrComenzi,ok){
+    this->aFolositReducerea=0;
+    }
+    virtual void mesajReducere(){
+    cout<<"Urmatoarea comanda a dumneavoastra fi redusa cu 10%";
+    this->aFolositReducerea=1;
+    }
+};
+
+void MeniuClasaRestaurant(){
+    ClearConsole();
+    char c;
+    cout<<"Buna ziua,acum va voi prezenta calsa Restaurante din acest program.";
+    cout<<"Acestea sunt datele de tipul private din interiorul clasei:";
+    cout<<endl<<"static int nrRestaurante;";
+    cout<<endl<<"const int nrRestaurant=nrRestaurante++;";
+    cout<<endl<<"int nrComenzi;";
+    cout<<endl<<"int nrProduse;";
+    cout<<endl<<"bool transportPropriu;";
+    cout<<endl<<"char* numeRestaurant;";
+    cout<<endl<<"char meniu[];";
+    cout<<endl<<"char stele;";
+    cout<<endl<<"float procentaj;";
+    cout<<endl<<"double profitGenerat;";
+    cout<<endl<<"int* preturi;";
+    cout<<"\nPuteti apasa orice litera de pe tastatura si enter pentru a continua pe parcursul prezentarii.";
+    cin>>c;
+    ClearConsole();
+    cout<<"Afisarile facute in aceste teste vor folosi forma supraincarcata a operatoruliu <<.";
+    cout<<"\nVom incepe prin testarea celor 3 constructori folosind instructiunile:";
+
+    char* sir=new char[strlen("KFC")+1];
+    strcpy(sir,"KFC");
+    int* v=new int[1];
+    v[0]=7;
+    char* sir1=new char[strlen("Anonim3456")+1];
+    strcpy(sir1,"Anonim3456");
+    int* v1=new int[2];
+    v1[0]=7;
+    v1[1]=6;
+    Restaurante a(0,0,1,sir,"peste,",'3',20.5,0,1,v);
+    cout<<"\n----------------------------------";
+    cout<<"\nRestaurante a(0,0,1,sir, peste, ,'3',20.5,0,1,v);      :\n";
+    cout<<a;
+    Restaurante b('3',sir1,"peste,vaca",2,v1);
+    cout<<"\n----------------------------------";
+    cout<<"\nRestaurante b('3',sir1, peste,vaca ,2,v1);      :\n";
+    cout<<b;
+    Restaurante d;
+    cout<<"\n----------------------------------";
+    cout<<"\nRestaurante d      :\n";
+    cout<<d;
+    delete [] sir;
+    delete [] sir1;
+    delete [] v;
+    delete [] v1;
+    cin>>c;
+    ClearConsole();
+    cout<<"Folosind setterii si getterii vom rescrie restaurantul f si il vom afisa:";
+    int nrComen;
+    int nrProduse;
+    bool transportPropriu;
+    char nume[100];
+    char meniu[100],aux[20];
+    char stele;
+    float procentaj;
+    double profitGenerat;
+    Restaurante f;
+    cout<<"\nDati nr comenzi:";cin>>nrComen;
+    f.setNrComenzi(nrComen);
+    cin.get();
+    cout<<"\nDati nume restaurant:";cin.get(nume,100);f.setNumeRestaurant(nume);
+    cin.get();
+    cout<<"\nDati nr de produse din meniu:";cin>>nrProduse;f.setNrProduse(nrProduse);
+    int* preturi=new int[nrProduse];
+    for (int i=0;i<nrProduse;++i){
+        cout<<"\nDati produsul "<<i+1<<" din meniu:";
+        cin.get();
+        cin.get(aux,20);
+        strcat(meniu,aux);
+        strcat(meniu,",");
+        cout<<"\nDati pretul produsului "<<aux<<":";cin>>preturi[i];
+    }
+    f.setMeniu(meniu);
+    f.setPreturi(preturi,nrProduse);
+    if (preturi!=NULL)delete [] preturi;
+    cout<<"\nDati procentajul pe comanda:";cin>>procentaj;f.setProcentaj(procentaj);
+    cout<<"\nDati profitul generat:";cin>>profitGenerat;f.setProfitGenerat(profitGenerat);
+    cout<<"\nDati numarul de stele ale restaurantului:";cin>>stele;f.setStele(stele);
+    cout<<"\nAre transport propriu?(1/0):";cin>>transportPropriu;f.setTransportPropriu(transportPropriu);
+    cout<<"\nf.getMeniu():"<<f.getMeniu();
+    cout<<"\nf.getNrComenzi():"<<f.getNrComenzi();
+    cout<<"\nf.getNrProduse():"<<f.getNrProduse();
+    cout<<"\nf.getNrRestaurant():"<<f.getNrRestaurant();
+    cout<<"\nf.getNrRestaurante():"<<f.getNrRestaurante();
+    cout<<"\nf.getNumeRestaurant():"<<f.getNumeRestaurant();
+    cout<<"\nf.getPreturi():";///<<f.getPreturi();
+    for (int i=0;i<f.getNrProduse();++i)
+        cout<<*(f.getPreturi() +i)<<" ";
+    cout<<"\nf.getProcentaj():"<<f.getProcentaj();
+    cout<<"\nf.getProfitGenerat():"<<f.getProfitGenerat();
+    cout<<"\nf.getStele():"<<f.getStele();
+    cout<<"\nf.getTransportPropriu():"<<f.getTransportPropriu();
+    cin>>c;
+    ClearConsole();
+    cout<<"De asemenea avem supraincarcarea operatorilor + , - , ++ , --, pe care-i vom testa pe a:";
+    cout<<"\nOperatorii - si scad , respectiv adauga ,un intreg la profitul generat:";
+    cout<<"\na.getProfitGenerat():"<<a.getProfitGenerat();
+    a=a+10;
+    cout<<"\na=a+10;a.getProfitGenerat();:"<<a.getProfitGenerat();
+    a=a-10;
+    cout<<"\na=a-10;a.getProfitGenerat();:"<<a.getProfitGenerat();
+    cout<<"\nOperatorii -- si ++ decremenmteaza,respectiv incrementeaza numarul de comenzi:";
+    cout<<"\na.getNrComenzi();:"<<a.getNrComenzi();
+    ++a;
+    cout<<"\n++a;a.getNrComenzi();:"<<a.getNrComenzi();
+    --a;
+    cout<<"\n--a;a.getNrComenzi();:"<<a.getNrComenzi();
+    cin>>c;
+    ClearConsole();
+    cout<<"Operatorul < si == sunt supraincarcati pentru a compara in functie de profitul adus de restaurante:";
+    cout<<"\na.getProfitGenerat();:"<<a.getProfitGenerat();
+    cout<<"\nb.getProfitGenerat();:"<<b.getProfitGenerat();
+    cout<<"\na<b;:";
+    if(a<b)cout<<"1";
+    else cout<<"0";
+    cout<<"\na==b;:";
+    if(a==b)cout<<"1";
+    else cout<<"0";
+    cout<<"\n\nDe asemeanea avem functionalitatea voidAfisareMeniu() care afiseaza meniul:";
+    cout<<"\nb.afisareMeniu();:\n\n";
+    b.afisareMeniu();
+    cout<<"\n\nDe asemeanea mai avem si operatorul de indexare si cel explicit:";
+    cout<<"\nb[0];:"<<b[0];
+    cout<<"\n(int)b;:"<<(int)b;
+    cin>>c;
+    ClearConsole();
+    cout<<"De asemeanea avem supraincarcarea opertorului >> :";
+    Restaurante zz;
+    cin>>zz;
+    cout<<"---------Afisare:------------------";
+    cout<<zz;
+    cin>>c;
+    ClearConsole();
+    cout<<"Acum prentru a testa copy constructerul, forma supraincarcata a operatorului =,";
+    cout<<"\nsetterii si getterii vom face o copie a restaurantului a , apoi vom folosi setterii si getterii:";
+    cout<<"\n----------------------------------";
+    cout<<"\ng(a);      :\n";
+    Restaurante g(a);
+    cout<<g;
+    cout<<"\n----------------------------------";
+    cout<<"\ne=b;      :\n";
+    Restaurante e;
+    e=b;
+    cout<<e;
+    cin>>c;
+    ClearConsole();
+}
+void MeniuEtapa2(){
+    ClearConsole();
+    char c;
+    cout<<"Pentru etapa a doua voi incepe prin a prezenta extinderea a doua clase din etapa 1:";
+    cout<<endl<<"class Client{}; clasa din etapa 1";
+    cout<<endl<<"class ClientNou:public Client{};";
+    cout<<endl<<"class Comenzi{}; clasa din etapa 1";
+    cout<<endl<<"class ComenziCuReducere:public Comenzi{}";
+    cout<<endl<<"De asemeanea am tranformat clasa class Client{}; intr o clasa abstracta";
+    cout<<endl<<"prin adaugarea virtual void mesajReducere()=0; ca metoda virtuala pura.";
+    cout<<endl<<endl<<"Puteti continua prin apasarea oricarei taste ormate de enter.";
+    cin>>c;
+    ClearConsole();
+    cout<<endl<<"De asemean am implementat interfata:";
+    cout<<endl<<"class Administrator{";
+    cout<<endl<<"    public:";
+    cout<<endl<<"    virtual void afisareRestaurante()=0;";
+    cout<<endl<<"    virtual void adaugaRestaurant()=0;";
+    cout<<endl<<"    virtual void eliminaRestaurant()=0;";
+    cout<<endl<<"};";
+    cout<<endl<<"Cat si clasa class Manager:public Administrator{}; ce poate contine";
+    cout<<endl<<"sau nu cod in functie de cat timp am.Aceasta nu este ca cerinta minima.";
+    cin>>c;
+    ClearConsole();
+    cout<<endl<<"De asemeanea am implementat o clasa ce exemplifica conceptul de HAS A:";
+    cout<<endl<<"class ListaRestaurante{private:Restaurante *lista[10];int index;public:....};";
+    cout<<endl<<"Pentru care vom rula urmatorul cod pentru a-i arata functionabilitatea si functionabilitatile:";
+    cout<<endl<<"ListaRestaurante lis;";
+    cout<<endl<<"char* sir=new char[strlen(KFC)+1];";
+    cout<<endl<<"strcpy(sir,KFC);";
+    cout<<endl<<"int* v=new int[1];";
+    cout<<endl<<"v[0]=7;";
+    cout<<endl<<"char* sir1=new char[strlen(Anonim3456)+1];";
+    cout<<endl<<"strcpy(sir1,Anonim3456);";
+    cout<<endl<<"int* v1=new int[2];";
+    cout<<endl<<"v1[0]=7;";
+    cout<<endl<<"v1[1]=6;";
+    cout<<endl<<"Restaurante a(0,0,1,sir,peste,,'3',20.5,0,1,v);";
+    cout<<endl<<"Restaurante b('3',sir1,peste,vaca,2,v1);";
+    cout<<endl<<"Restaurante c;";
+    cout<<endl<<"lis.adaugare(a);";
+    cout<<endl<<"lis.adaugare(b);";
+    cout<<endl<<"lis.adaugare(c);";
+    cout<<endl<<"for(int i=0;i<lis.getIndex();++i)lis.afiseazaRestaurant(i);";
+    cout<<endl<<"lis.stergere(1);";
+    cout<<endl<<"lis.adaugare(b);";
+    cout<<endl<<"for(int i=0;i<lis.getIndex();++i)lis.afiseazaRestaurant(i);";
+    cout<<endl<<"delete [] sir;";
+    cout<<endl<<"delete [] sir1;";
+    cout<<endl<<"delete [] v;";
+    cout<<endl<<"delete [] v1;";
+    cin>>c;
+    ClearConsole();
+    ListaRestaurante lis;
+    char* sir=new char[strlen("KFC")+1];
+    strcpy(sir,"KFC");
+    int* v=new int[1];
+    v[0]=7;
+    char* sir1=new char[strlen("Anonim3456")+1];
+    strcpy(sir1,"Anonim3456");
+    int* v1=new int[2];
+    v1[0]=7;
+    v1[1]=6;
+    Restaurante a(0,0,1,sir,"peste,",'3',20.5,0,1,v);
+    Restaurante b('3',sir1,"peste,vaca",2,v1);
+    Restaurante d;
+    lis.adaugare(a);
+    lis.adaugare(b);
+    lis.adaugare(d);
+    for(int i=0;i<lis.getIndex();++i)lis.afiseazaRestaurant(i);
+    lis.stergere(1);
+    lis.adaugare(b);
+    for(int i=0;i<lis.getIndex();++i)lis.afiseazaRestaurant(i);
+    delete [] sir;
+    delete [] sir1;
+    delete [] v;
+    delete [] v1;
+    cin>>c;
+    ClearConsole();
+    cout<<"De asemeanea codul respecta forma de ierarhie a claselor";
+    cout<<"Sper ca am prezentat aici tot ce aveati nevoie sa vedeti , o zi buna!";
+    cin>>c;
+    ClearConsole();
+}
+void MeniuEtapa3(){
+    ClearConsole();
+    char c;
+    cout<<"STL-urile sunt implementate in meniul interactiv void MeniuInteractiv()";
+    cout<<"\nExcceptiile sunt tratate in void MeniuClient(ListaRestaurante &l , map<int,Comenzi *> &MapComenzi)";
+    cout<<"\nCitirea din fisier este implementata in clasa restaurante pentru a se initializa lista de restaurante";
+    cout<<"\nAfisarea in fisier este implementata in clasa Comenzzi pentru a exporta comenzile intr-un fisier";
+    cout<<"\nMeniul interactiv este optiunea 2 din consola , cu cateva intructiuni pentru STL uri ,";
+    cout<<"\norice alta optiune fiind prezentata in etapele 1 si 2 ,urmand sa fie implementate alte functionalitati";
+    cin>>c;
+}
+void MeniuExplicatii(){
+    ClearConsole();
+    cout<<"1.Etapa 1 , clasa restaurant.";
+    cout<<"\n2.Etapa 2.";
+    cout<<"\n3.Etapa 3.";
+    cout<<"\n4.Inapoi.";
+    int x;cin>>x;
+    bool l=1;
+    while(l){
+    switch(x){
+    case 1:
+        MeniuClasaRestaurant();
+        break;
+    case 2:
+        MeniuEtapa2();
+        break;
+    case 3:
+        MeniuEtapa3();
+        break;
+    case 4:
+        l=0;
+        break;
+    }
+    if(l==1&&x<=4){
+    ClearConsole();
+    cout<<"1.Etapa 1 , clasa restaurant.";
+    cout<<"\n2.Etapa 2.";
+    cout<<"\n3.Etapa 3.(In lucru)";
+    cout<<"\n4.Inapoi.";
+    cin>>x;}
+    if(l==1&&x>4){
+    ClearConsole();
+    cout<<"Nu aveti aceasta optiune,dati o optiune corecta:";
+    cout<<"1.Etapa 1 , clasa restaurant.";
+    cout<<"\n2.Etapa 2.";
+    cout<<"\n3.Etapa 3.(In lucru)";
+    cout<<"\n4.Inapoi.";
+    cin>>x;}
+    }
+    return;
+}
+void MeniuClient(ListaRestaurante &l , map<int,Comenzi *> &MapComenzi){
+    char c;
+    int optiune,y;
+    ClearConsole();
+    cout<<"Acestea sunt restaurantele dispnibile:";
+    cout<<endl<<"0.Iesire";
+    for(int i=0;i<l.getIndex();++i){
+            cout<<endl<<i+1<<".";
+            cout<<l.getNumeRestaurantt(i);}
+    cout<<endl<<"Va rugam sa alegeti o optiune de la care sa comandati";
+
+    cin>>optiune;
+    if(optiune==0)return;
+    else{ClearConsole();
+        bool da=0;
+        do{
+        da=0;
+        try{if(optiune>l.getIndex()){da=1;throw optiune;}
+        (l[optiune-1]).afisareMeniu();
+        cout<<endl<<"Ce doriti sa comandati?:";
+        bool daa=0;
+        do{
+        daa=0;
+        try{cin>>y;
+        if(y<1 || y>(l[optiune-1]).getNrProduse()){daa=1;throw y;}
+        }
+        catch(int){
+        cout<<endl<<"Nu exista aceasta optiune, alegeti alta:";
+        cin>>y;
+        }
+        }while(daa);
+        }
+        catch(int){
+        cout<<endl<<"Nu exista aceasta optiune, alegeti alta:";
+        cin>>optiune;
+    }
+    }while(da);
+    }
+    ClearConsole();
+    Comenzi coma;
+    cin>>coma;
+    coma.setComanda(optiune,y);
+    ClearConsole();
+    cout<<endl<<"Comanda plasata cu succes!\nO zi buna!";
+    cin>>c;
+    MapComenzi.insert(pair<int,Comenzi*>(MapComenzi.size()+1,&coma));
+}
+void MeniuLivrator(list <Livrator *> &ListLivrator ,map<int,Comenzi *> &MapComenzi){
+    ClearConsole();
+    Livrator liv;
+    cin>>liv;
+    ListLivrator.insert(ListLivrator.end(),&liv);
+    ClearConsole();
+    char c;
+    cout<<"Livrator adaugat cu succes!\nO zi buna!";
+    cin>>c;
+}
+void MeniuProprietarRestaurant(ListaRestaurante &l){
+    ClearConsole();
+    Restaurante rez;
+    cin>>rez;
+    l.adaugare(rez);
+    ClearConsole();
+    cout<<"Restaurantul adaugat cu succes!\nO zi buna!";
+    char c;
+    cin>>c;
+}
+void MeniuAdministrator(vector<ClientNou *> &VectorClienti,list <Livrator *> &ListLivrator ,set<Administrator *> &SetAdministrator,map<int,Comenzi *> &MapComenzi,ListaRestaurante &lista){
+    ClearConsole();
+    char c;
+    Administrator admin("Alabala");
+    cin>>admin;
+    SetAdministrator.insert(&admin);
+    cin>>c;
+    ClearConsole();
+    cout<<"Administrator adaugat cu succes!\nO zi buna!";
+    cin>>c;
+}
+void MeniuInteractiv(){
+    ClearConsole();
+    vector<ClientNou *> VectorClienti;
+    list <Livrator *> ListLivrator;
+    set<Administrator *> SetAdministrator;
+    map<int,Comenzi *> MapComenzi;
+    ListaRestaurante lista;
+    Restaurante a;
+    lista.adaugare(a);
+    cout<<"Ca ce doriti sa va conectati in aplicatie?";
+    cout<<endl<<"1.Client.";
+    cout<<endl<<"2.Livrator.";
+    cout<<endl<<"3.Proprietar restaurant.";
+    cout<<endl<<"4.Administrator.";
+    cout<<endl<<"5.Inapoi";
+    int x;cin>>x;
+    bool l=1;
+    while(l){
+    switch(x){
+    case 1:
+        ClearConsole();
+        bool z;
+        cout<<"Doriti sa va creati cont?(1/0):";
+        cin>>z;
+        if (z==1){
+            ClientNou cli;
+            cin>>cli;
+            VectorClienti.insert(VectorClienti.end(),&cli);
+        }
+        MeniuClient(lista , MapComenzi);
+        break;
+    case 2:
+        MeniuLivrator(ListLivrator ,MapComenzi);
+        break;
+    case 3:
+        MeniuProprietarRestaurant(lista);
+        break;
+    case 4:
+        MeniuAdministrator(VectorClienti ,ListLivrator ,SetAdministrator ,MapComenzi ,lista);
+        break;
+    case 5:
+        l=0;
+        break;
+    }
+    if(l==1 && x<=5){
+    ClearConsole();
+    cout<<"Ca ce doriti sa va conectati in aplicatie?";
+    cout<<endl<<"1.Client.";
+    cout<<endl<<"2.Livrator.";
+    cout<<endl<<"3.Proprietar restaurant.";
+    cout<<endl<<"4.Administrator.";
+    cout<<endl<<"5.Inapoi";
+    cin>>x;}
+    if(l==1 && x>5){
+    ClearConsole();
+    cout<<"Nu aveti aceasta optiune,dati o optiune corecta:";
+    cout<<endl<<"1.Client.";
+    cout<<endl<<"2.Livrator.";
+    cout<<endl<<"3.Proprietar restaurant.";
+    cout<<endl<<"4.Administrator.";
+    cout<<endl<<"5.Inapoi";
+    cin>>x;}
+    }
+    return;
+}
+void MeniuPrincipal(){
+    ClearConsole();
+    cout<<"Va recomand sa folositi meniul de teste si explicatii mai intai:";
+    cout<<"\n1.Meniu teste si expllicatii cod.";
+    cout<<"\n2.Meniu interactiv.";
+    cout<<"\n3.Iesire.";
+    cout<<"\nCe optiune doriti?";
+    int x;cin>>x;
+    bool l=1;
+    while(l){
+    switch(x){
+    case 1:
+        MeniuExplicatii();
+        break;
+    case 2:
+        MeniuInteractiv();
+        break;
+    case 3:
+        l=0;
+        break;
+    }
+    if(l==1&&x<=3){
+    ClearConsole();
+    cout<<"Va recomand sa folositi meniul de teste si explicatii mai intai:";
+    cout<<"\n1.Meniu teste si expllicatii cod.";
+    cout<<"\n2.Meniu interactiv.(Nu este gata din pacate)";
+    cout<<"\n3.Iesire.";
+    cout<<"\nCe optiune doriti?";
+    cin>>x;}
+    if(l==1&&x>3){
+    ClearConsole();
+    cout<<"Nu aveti aceasta optiune,alegeti o optiune din meniu:";
+    cout<<"\n1.Meniu teste si expllicatii cod.";
+    cout<<"\n2.Meniu interactiv.(Nu este gata din pacate)";
+    cout<<"\n3.Iesire.";
+    cout<<"\nCe optiune doriti?";
+    cin>>x;}
+    }
+    return;
+}
+
+int main(){
+    MeniuPrincipal();
+    return 0;
+}
