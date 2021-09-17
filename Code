@@ -412,6 +412,7 @@ class ListaRestaurante{
         return *lista[index];
     }
 };
+
 class Comenzi{
     private:
     static char Firma[9];
@@ -566,6 +567,7 @@ class Comenzi{
     this->greutateComanda=this->greutateComanda - x;
     return *this;
     }
+    
     Comenzi &operator =(const Comenzi& com){
 
         if(this!=&com){
