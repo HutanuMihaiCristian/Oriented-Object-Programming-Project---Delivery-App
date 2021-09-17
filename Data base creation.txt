@@ -1,215 +1,214 @@
 CREATE TABLE Client(
-	Numar_Telefon  varchar(15) NOT NULL PRIMARY KEY,
-	Adresa varchar(100) NOT NULL,
-	Nume varchar(20) NOT NULL
+	Telefon_Number  varchar(15) NOT NULL PRIMARY KEY,
+	Adress varchar(100) NOT NULL,
+	Name varchar(20) NOT NULL
 );
 
-CREATE TABLE Comenzi(
-	Numar_Telefon varchar(15) ,
-	comanda varchar(500) NOT NULL,
-	PRIMARY KEY (Numar_Telefon,comanda),
-	FOREIGN KEY (Numar_Telefon) REFERENCES Client(Numar_Telefon)
+CREATE TABLE Orders(
+	Telefon_Number varchar(15) ,
+	Order varchar(500) NOT NULL,
+	PRIMARY KEY (Telefon_Number,Order),
+	FOREIGN KEY (Telefon_Number) REFERENCES Client(Telefon_Number)
 );
 
-CREATE TABLE Firma(
-	Nume_Firma varchar(20) NOT NULL UNIQUE PRIMARY KEY,
-	Lider varchar(20)
+CREATE TABLE Company(
+	Company_Name varchar(20) NOT NULL UNIQUE PRIMARY KEY,
+	founder varchar(20)
 );
 
-CREATE TABLE Parteneri(
-	Partener_id int unique PRIMARY KEY,
-	Locatie varchar(100),
-	Nume_Firma varchar(20),
-	Nume varchar(10) 
+CREATE TABLE Partners(
+	Partner_id int unique PRIMARY KEY,
+	Location varchar(100),
+	Company_Name varchar(20)
 );
 
-CREATE TABLE Aplicatie(
-	Nume_Aplicatie varchar(20) Primary key NOT NULL,
-	Nume_Firma varchar(20),
-	Numar_comenzi int,
-	Numar_utilizatori int,
-	FOREIGN KEY (Nume_Firma) REFERENCES Firma(Nume_Firma)
+CREATE TABLE Aplication(
+        Aplication_Name varchar(20) Primary key NOT NULL,
+	Company_Name varchar(20),
+	Order_Name int,
+	User_Name int,
+	FOREIGN KEY (Company_Name) REFERENCES Company(Company_Name)
 );
 
-CREATE TABLE CosCumparaturi(
-	Cos_ID int UNIQUE NOT NULL PRIMARY KEY,
-	Nume_Parteneri varchar(20) NOT NULL,
-	Nume_Produse varchar(100) NOT NULL,
-	Nume_Aplicatie varchar(20),
-	FOREIGN KEY (Nume_Aplicatie) REFERENCES Aplicatie(Nume_Aplicatie)
+CREATE TABLE Shopping_Cart(
+	Cart_ID int UNIQUE NOT NULL PRIMARY KEY,
+	Partner_Name varchar(20) NOT NULL,
+	Product_Name varchar(100) NOT NULL,
+	Aplication_Name varchar(20),
+	FOREIGN KEY (Aplication_Name) REFERENCES Aplication(Aplication_Name)
 );
 
-CREATE TABLE Produse(
-	Locatie varchar(100) NOT NULL PRIMARY KEY,
-	Produs varchar(20) NOT NULL UNIQUE
+CREATE TABLE Products(
+	Location varchar(100) NOT NULL PRIMARY KEY,
+	Product varchar(20) NOT NULL UNIQUE
 );
 
-CREATE TABLE Livratori(
-	Numar_Telefon varchar(14) PRIMARY KEY UNIQUE NOT NULL,
-	Nume varchar(20)
+CREATE TABLE DeliveryMan(
+	Telefon_Number varchar(14) PRIMARY KEY UNIQUE NOT NULL,
+	Name varchar(20)
 );
 
-CREATE TABLE Vehicul(
-	Numar_Inmatriculare varchar(10) NOT NULL UNIQUE PRIMARY KEY,
-	Producator varchar(10) NOT NULL,
+CREATE TABLE Vehicle(
+	Registration_Number varchar(10) NOT NULL UNIQUE PRIMARY KEY,
+	Producer varchar(10) NOT NULL,
 	Model  varchar (10),
 	Model_Full_Name varchar(20)
 );
 
-CREATE TABLE TaraProducator(
-	Producator varchar(10) NOT NULL PRIMARY KEY,
-	Tara_Producator varchar(15) NOT NULL
+CREATE TABLE ProducerCountry(
+	Producer varchar(10) NOT NULL PRIMARY KEY,
+	Producer_Country_Name varchar(15) NOT NULL
 );
 
 CREATE SEQUENCE MySequence;
 
-INSERT into Firma (Nume_Firma , Lider)
+INSERT into Company (Company_Name , founder)
 values ('Gruparea.SRL' , 'Maris Uchir');
-INSERT into Firma (Nume_Firma , Lider)
+INSERT into Company (Company_Name , founder)
 values ('Amazica.SRL' , 'Alex Huitoana');
-INSERT into Firma (Nume_Firma , Lider)
+INSERT into Company (Company_Name , founder)
 values ('Antoni.SRL' , 'Ion Ionescu');
-INSERT into Firma (Nume_Firma , Lider)
+INSERT into Company (Company_Name , founder)
 values ('Abracadabra.SRL' , 'Andreea Andrei');
-INSERT into Firma (Nume_Firma , Lider)
+INSERT into Company (Company_Name , founder)
 values ('HaHa.SRL' , 'Smiley Alex');
 
 INSERT into 
-Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+Partners (Partner_id , Location , Name , Company_Name)
 values (1 , 'Strada Principala,Bucuresti,15' , 'KFC' , 'Gruparea.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (2 , 'Strada Principala,Bucuresti,15' , 'KFC' , 'Amazica.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (3 , 'Strada Lepadatului,45,Bucuresti' , 'McD' , 'HaHa.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (4 , 'Strada Lepadatului,45,Bucuresti' , 'McD' , 'Antoni.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (5 , 'Strada Lepadatului,45,Bucuresti' , 'McD' , 'Abracadabra.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (6 , 'Strada N-am Idei,22,Bucuresti' , 'Hut Pizza' , 'Gruparea.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (7 , 'Strada Ploiii,78,Bucuresti' , 'Alfrenzo' , 'Amazica.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (8 , 'Strada Zapezii,48,Bucuresti' , 'Naruto' , 'HaHa.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (9 , 'Strada Ploiii,78,Bucuresti' , 'Alfrenzo' , 'Antoni.SRL');
-INSERT into Parteneri (Partener_id , Locatie , Nume , Nume_Firma)
+INSERT into Partners (Partner_id , Location , Name , Company_Name)
 values (10 , 'Strada N-am Idei,22,Bucuresti' , 'Hut Pizza' , 'Abracadabra.SRL');
 
-INSERT into Produse (Locatie , Produs)
+INSERT into Products (Location , Prodct)
 values ('Strada Principala,Bucuresti,15' , 'Hamburgar,Aripi');
-INSERT into Produse (Locatie , Produs)
+INSERT into Products (Location , Prodct)
 values ('Strada Lepadatului,45,Bucuresti' , 'Pizza');
-INSERT into Produse (Locatie , Produs)
+INSERT into Products (Location , Prodct)
 values ('Strada N-am Idei,22,Bucuresti' , 'Fructe De Mare');
-INSERT into Produse (Locatie , Produs)
+INSERT into Products (Location , Prodct)
 values ('Strada Ploiii,78,Bucuresti' , 'Dulciuri');
-INSERT into Produse (Locatie , Produs)
+INSERT into Products (Location , Prodct)
 values ('Strada Zapezii,48,Bucuresti' , 'Placinta,Zapazici');
 
-INSERT into Aplicatie (Nume_Aplicatie , Nume_Firma , Numar_comenzi , Numar_utilizatori)
+INSERT into Aplication (Aplication_Name , Company_Name , Order_name , User_Name)
 values ('Glava' , 'Gruparea.SRL' , 3 , 4);
-INSERT into Aplicatie (Nume_Aplicatie , Nume_Firma , Numar_comenzi , Numar_utilizatori)
+INSERT into Aplication (Aplication_Name , Company_Name , Order_name , User_Name)
 values ('Tu Mananci' , 'Amazica.SRL' , 10 , 2);
-INSERT into Aplicatie (Nume_Aplicatie , Nume_Firma , Numar_comenzi , Numar_utilizatori)
+INSERT into Aplication (Aplication_Name , Company_Name , Order_name , User_Name)
 values ('Tarzzz' , 'Antoni.SRL' , 7 , 1);
-INSERT into Aplicatie (Nume_Aplicatie , Nume_Firma , Numar_comenzi , Numar_utilizatori)
+INSERT into Aplication (Aplication_Name , Company_Name , Order_name , User_Name)
 values ('Alecu' , 'Abracadabra.SRL' , 4 , 4);
-INSERT into Aplicatie (Nume_Aplicatie , Nume_Firma , Numar_comenzi , Numar_utilizatori)
+INSERT into Aplication (Aplication_Name , Company_Name , Order_name , User_Name)
 values ('La Tine' , 'HaHa.SRL' , 3 , 16);
 
-INSERT into CosCumparaturi (Cos_ID , Nume_Parteneri , Nume_Produse , Nume_Aplicatie)
+INSERT into Shopping_Cart (Cart_ID , Partner_Name , Product_Name , Aplication_Name)
 values (1 , 'KFC' , 'Hamburgar,Aripi' , 'Glava');
-INSERT into CosCumparaturi (Cos_ID , Nume_Parteneri , Nume_Produse , Nume_Aplicatie)
+INSERT into Shopping_Cart (Cart_ID , Partner_Name , Product_Name , Aplication_Name)
 values (2 , 'KFC' , 'Hamburgar' , 'Tu Mananci');
-INSERT into CosCumparaturi (Cos_ID , Nume_Parteneri , Nume_Produse , Nume_Aplicatie)
+INSERT into Shopping_Cart (Cart_ID , Partner_Name , Product_Name , Aplication_Name)
 values (3 , 'KFC' , 'Aripi' , 'Tarzzz');
-INSERT into CosCumparaturi (Cos_ID , Nume_Parteneri , Nume_Produse , Nume_Aplicatie)
+INSERT into Shopping_Cart (Cart_ID , Partner_Name , Product_Name , Aplication_Name)
 values (4 , 'McD' , 'Pizza' , 'Alecu');
-INSERT into CosCumparaturi (Cos_ID , Nume_Parteneri , Nume_Produse , Nume_Aplicatie)
+INSERT into Shopping_Cart (Cart_ID , Partner_Name , Product_Name , Aplication_Name)
 values (5 , 'McD' , 'Pizza' , 'La Tine');
 
-INSERT into Client (Numar_Telefon , Adresa , Nume)
+INSERT into Client (Telefon_Number , Adress , Name)
 values ('0743 365 346' , 'Strd Primaverii,Buc' , 'Alex Alexandru');
-INSERT into Client (Numar_Telefon , Adresa , Nume)
+INSERT into Client (Telefon_Number , Adress , Name)
 values ('0734 342 543' , 'Str Alunecoasa,Buc' , 'Garcea Mihai');
-INSERT into Client (Numar_Telefon , Adresa , Nume)
+INSERT into Client (Telefon_Number , Adress , Name)
 values ('0764 435 324' , 'Str Dinamic,Buc' , 'Ion Ionita');
-INSERT into Client (Numar_Telefon , Adresa , Nume)
+INSERT into Client (Telefon_Number , Adress , Name)
 values ('0732 432 234' , 'Str Doblic' , 'Cin Cinescu');
-INSERT into Client (Numar_Telefon , Adresa , Nume)
+INSERT into Client (Telefon_Number , Adress , Name)
 values ('0734 765 125' , 'Str Bolicv' , 'Dan Danescu');
 
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0743 365 346' , 'Hamburger');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0743 365 346' , 'Pui');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0764 435 324' , 'Pizza');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0732 432 234' , 'Dulciuri');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0734 765 125' , 'Aloe');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0743 365 346' , 'Hamburger,pui');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0743 365 346' , 'Pui,aripioare');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0764 435 324' , 'Pizza,dulciuri');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0732 432 234' , 'Dulciuri,Aloe');
-INSERT into Comenzi (Numar_Telefon , comanda)
+INSERT into Orders (Telefon_Number , Order)
 values ('0734 765 125' , 'Aloe,Hamburger');
 
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0743 365 346' , 'Alex');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0744 365 346' , 'Andrei');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0765 435 324' , 'Peter');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0736 432 234' , 'Denis');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0737 765 125' , 'Alin');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0748 365 346' , 'Radu');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0749 365 346' , 'Narcis');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0760 435 324' , 'Iulia');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0730 032 234' , 'Iulia');
-INSERT into Livratori (Numar_Telefon , Nume)
+INSERT into DeliveryMan (Telefon_Number , Name)
 values ('0734 705 125' , 'Iulian');
 
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B001AAA' , 'Mazda' , 'Aero' , 'Mazda-Aero');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B002AAA' , 'Mazda' , 'Nitro' , 'Mazda-Nitro');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B003AAA' , 'Audi' , 'A5' , 'Audi-A5');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B004AAA' , 'Audi' , 'A1' , 'Audi-A1');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B005AAA' , 'Audi' , 'A2' , 'Audi-A2');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B006AAA' , 'Audi' , 'A3' , 'Audi-A3');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B007AAA' , 'Audi' , 'A4' , 'Audi-A4');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B008AAA' , 'WW' , 'Passat' , 'WW-Passat');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B009AAA' , 'Mercedez' , 'Benz' , 'Mercedez-Benz');
-INSERT into Vehicul (Numar_Inmatriculare , Producator , Model , Model_Full_Name)
+INSERT into Vehicle (Registration_Number , Producer , Model , Model_Full_Name)
 values ('B010AAA' , 'BMW' , 'Seria2' , 'BMW-Seria2')
 
-INSERT into TaraProducator (Producator , Tara_Producator )
+INSERT into ProducerCountry (Producer , Producer_Country_Name )
 values ('Mazda' , 'Romania');
-INSERT into TaraProducator (Producator , Tara_Producator )
+INSERT into ProducerCountry (Producer , Producer_Country_Name )
 values ('Audi' , 'Romania');
-INSERT into TaraProducator (Producator , Tara_Producator )
+INSERT into ProducerCountry (Producer , Producer_Country_Name )
 values ('WW' , 'Ungaria');
-INSERT into TaraProducator (Producator , Tara_Producator )
+INSERT into ProducerCountry (Producer , Producer_Country_Name )
 values ('Mercedez' , 'Anglia');
-INSERT into TaraProducator (Producator , Tara_Producator )
+INSERT into ProducerCountry (Producer , Producer_Country_Name )
 values ('BMW' , 'Germania');
